@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Appointment Booking</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Service Booking</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#services">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#booking">Book Appointment</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-light py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-dark">
+                <h1 class="display-4 fw-bolder">Book Your Service</h1>
+                <p class="lead fw-normal text-dark-50 mb-0">Select from our premium services and book your appointment
+                    today</p>
+            </div>
+        </div>
+    </header>
+
+    <section class="py-5" id="services">
+        <div class="container px-4 px-lg-5 mt-5">
+            <h2 class="fw-bolder mb-4">Our Services</h2>
+            <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-3" id="service-list">
+                <!-- Services will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-light" id="booking">
+        <div class="container px-4 px-lg-5 mt-5">
+            <h2 class="fw-bolder mb-4">Book an Appointment</h2>
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <form id="booking-form">
+                                <div class="mb-3">
+                                    <label for="service-select" class="form-label">Select Service</label>
+                                    <select class="form-select" id="service-select" required>
+                                        <option value="" selected disabled>Choose a service...</option>
+                                        <!-- Options will be loaded dynamically -->
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="appointment-date" class="form-label">Appointment Date & Time</label>
+                                    <input type="text" class="form-control" id="appointment-date" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="customer-name" class="form-label">Your Name</label>
+                                    <input type="text" class="form-control" id="customer-name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="customer-phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="customer-phone" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="customer-email" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="customer-email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="customer-notes" class="form-label">Additional Notes (Optional)</label>
+                                    <textarea class="form-control" id="customer-notes" rows="3"></textarea>
+                                </div>
+                                <button type="button" class="btn btn-primary" id="book-appointment-btn">Book
+                                    Appointment</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmation-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Appointment Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="confirmation-details">
+                    <!-- Confirmation details will be loaded dynamically -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="save-confirmation">Save Receipt</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="py-5 bg-dark">
+        <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; Service Booking 2025</p>
+        </div>
+    </footer>
+
+    <!-- Load Firebase first -->
+    <script src="https://www.gstatic.com/firebasejs/11.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.7.1/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.7.1/firebase-auth-compat.js"></script>
+
+    <!-- Load other libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDcQDlngQhjaMD7nC9ELKAv_MFxSHnKDsU",
+            authDomain: "store-ea0a6.firebaseapp.com",
+            projectId: "store-ea0a6",
+            storageBucket: "store-ea0a6.firebasestorage.app",
+            messagingSenderId: "647069208771",
+            appId: "1:647069208771:web:18a6dcfa258d6f1811d276",
+            measurementId: "G-7B63VZVLTJ"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+            console.log('Firebase initialized in HTML');
+        }
+    </script>
+
+    <!-- Load configuration and services -->
+    <script src="../shared/js/config.js"></script>
+    <script src="../shared/js/services.js"></script>
+    <script src="js/booking.js"></script>
+
+    <!-- Debug script -->
+    <script>
+        window.addEventListener('load', function () {
+            console.log('Window loaded, checking services...');
+            console.log('Services available:', window.services);
+            console.log('Service list element:', document.getElementById('service-list'));
+            console.log('Service select element:', document.getElementById('service-select'));
+        });
+    </script>
+</body>
+
+</html>
